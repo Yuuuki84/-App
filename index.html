@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>天気アプリ</title>
+</head>
+<body>
+
+  <h1>天気アプリ</h1>
+
+  <!-- ① 都市名の入力 -->
+  <input type="text" id="city-input" placeholder="都市名を英語で入力（例：Tokyo）">
+  <button id="search-btn">検索</button>
+
+  <!-- ② エラーメッセージ -->
+  <p id="error-msg" style="color: red; display: none;">
+    都市が見つかりませんでした
+  </p>
+
+  <!-- ③ 天気の表示エリア -->
+  <div id="weather-result" style="display: none;">
+    <h2 id="city-name"></h2>
+    <p id="weather-desc"></p>
+    <p id="temperature"></p>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
