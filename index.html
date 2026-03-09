@@ -1,58 +1,370 @@
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>お天気アプリ App </title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>お天気アプリ App</title>
 
   <style>
-    #city-input {
-      width: 300px;
-      padding: 6px 10px;
-      font-size: 16px;
+    :root{
+      --bg1:#0ea5e9;
+      --bg2:#6366f1;
+      --card: rgba(255,255,255,0.92);
+      --text:#0f172a;
+      --muted:#475569;
+      --line: rgba(15,23,42,0.12);
+      --accent:#2563eb;
+      --accent2:#22c55e;
+      --danger:#ef4444;
+      --shadow: 0 18px 50px rgba(2, 6, 23, 0.18);
+      --radius: 18px;
+      --radius2: 14px;
+      --font: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
     }
 
-    #search-btn {
-      padding: 6px 16px;
+    [data-theme="dark"]{
+      --card: rgba(2, 6, 23, 0.70);
+      --text:#e2e8f0;
+      --muted:#94a3b8;
+      --line: rgba(226,232,240,0.14);
+      --shadow: 0 18px 60px rgba(0,0,0,0.45);
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: var(--font);
+      color: var(--text);
+      background:
+        radial-gradient(1200px 800px at 15% 10%, rgba(255,255,255,0.25), transparent 60%),
+        radial-gradient(900px 700px at 90% 30%, rgba(255,255,255,0.18), transparent 60%),
+        linear-gradient(135deg, var(--bg1), var(--bg2));
+      padding: 22px;
+    }
+
+    .wrap{
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    .header{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .title{
+      line-height: 1.1;
+      margin: 0;
+      font-size: 30px;
+      letter-spacing: .02em;
+    }
+    .subtitle{
+      margin: 6px 0 0;
+      color: rgba(255,255,255,0.85);
+      font-size: 14px;
+    }
+
+    .card{
+      background: var(--card);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      padding: 18px;
+    }
+
+    .toolbar{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items:center;
+      justify-content:flex-end;
+    }
+
+    .btn{
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.75);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight: 600;
+      transition: transform .05s ease, background .15s ease, border-color .15s ease;
+      user-select:none;
+    }
+    [data-theme="dark"] .btn{ background: rgba(2,6,23,0.55); }
+    .btn:hover{ transform: translateY(-1px); border-color: rgba(37,99,235,.45); }
+    .btn:disabled{ opacity:.55; cursor:not-allowed; transform:none; }
+
+    .btn.primary{
+      background: linear-gradient(135deg, #2563eb, #60a5fa);
+      border-color: transparent;
+      color: white;
+    }
+    .btn.ghost{
+      background: transparent;
+    }
+
+    .search{
+      display:grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 10px;
+      align-items:center;
+      margin-top: 12px;
+    }
+
+    #city-input{
+      width: 100%;
+      padding: 12px 14px;
       font-size: 16px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      outline: none;
+      background: rgba(255,255,255,0.9);
+      color: var(--text);
+    }
+    [data-theme="dark"] #city-input{ background: rgba(2,6,23,0.35); }
+
+    .select{
+      padding: 11px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.85);
+      color: var(--text);
+      font-weight: 600;
+    }
+    [data-theme="dark"] .select{ background: rgba(2,6,23,0.35); }
+
+    .chips{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .chip{
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.55);
+      cursor:pointer;
+      font-size: 13px;
+      color: var(--text);
+    }
+    [data-theme="dark"] .chip{ background: rgba(2,6,23,0.35); }
+
+    .status{
+      margin-top: 12px;
+      display:none;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      background: rgba(255,255,255,0.6);
+    }
+    [data-theme="dark"] .status{ background: rgba(2,6,23,0.35); }
+
+    .alert{
+      display:none;
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(239,68,68,.35);
+      background: rgba(239,68,68,.12);
+      color: #b91c1c;
+      font-weight: 700;
+    }
+    [data-theme="dark"] .alert{ color: #fecaca; }
+
+    .result{
+      margin-top: 16px;
+      display:none;
+    }
+
+    .result-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+    }
+
+    .city{
+      display:flex;
+      align-items:center;
+      gap: 12px;
+      min-width: 240px;
+    }
+    .city h2{
+      margin:0;
+      font-size: 20px;
+    }
+    .city p{
+      margin:2px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .summary{
+      display:flex;
+      align-items:center;
+      gap: 12px;
+    }
+    .tempBig{
+      font-size: 42px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+    .desc{
+      color: var(--muted);
+      font-weight: 700;
+    }
+    #weather-icon img{
+      width: 72px; height: 72px;
+      image-rendering: auto;
+      filter: drop-shadow(0 8px 14px rgba(0,0,0,.15));
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .kv{
+      border: 1px solid var(--line);
+      border-radius: var(--radius2);
+      padding: 10px 12px;
+      background: rgba(255,255,255,0.55);
+      min-height: 66px;
+    }
+    [data-theme="dark"] .kv{ background: rgba(2,6,23,0.28); }
+    .k{
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 800;
+      letter-spacing: .03em;
+    }
+    .v{
+      margin-top: 4px;
+      font-size: 15px;
+      font-weight: 800;
+      line-height: 1.3;
+      word-break: break-word;
+    }
+
+    .foot{
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .link{
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 800;
+    }
+
+    @media (max-width: 860px){
+      .grid{ grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 560px){
+      .search{ grid-template-columns: 1fr; }
+      .grid{ grid-template-columns: 1fr; }
+      .tempBig{ font-size: 38px; }
     }
   </style>
-
 </head>
+
 <body>
+  <div class="wrap">
+    <div class="header">
+      <div>
+        <h1 class="title">お天気アプリ App</h1>
+        <p class="subtitle">都市名（例：大阪、和歌山）で検索して、現在の天気を表示します。</p>
+      </div>
 
-  <h1>お天気アプリ App </h1>
+      <div class="toolbar">
+        <button class="btn ghost" id="theme-btn" type="button">🌙/☀️ テーマ</button>
+        <button class="btn ghost" id="clear-history-btn" type="button">🧹 履歴クリア</button>
+      </div>
+    </div>
 
-  <!-- ① 都市名の入力 -->
-  <input type="text" id="city-input" placeholder="都道府県を入力（例：大阪、和歌山）">
-  <button id="search-btn">検索</button>
+    <div class="card">
+      <div class="search" aria-label="検索エリア">
+        <input type="text" id="city-input" placeholder="都道府県/都市を入力（例：大阪、和歌山）" autocomplete="off" />
+        <select id="unit-select" class="select" aria-label="単位">
+          <option value="metric">℃</option>
+          <option value="imperial">℉</option>
+        </select>
+        <button id="search-btn" class="btn primary" type="button">検索</button>
+        <button id="geo-btn" class="btn" type="button">📍 現在地</button>
+      </div>
 
-  <!-- ② エラーメッセージ -->
-  <p id="error-msg" style="color: red; display: none;">
-    残念！該当結果は見つかりませんでした！
-  </p>
+      <!-- 状態表示（ロード中など） -->
+      <div id="status" class="status" role="status" aria-live="polite"></div>
 
-  <!-- ③ 天気の表示エリア（全項目に対応） -->
-<div id="weather-result" style="display: none;">
-  <h2 id="city-name"></h2>
-  <p id="weather-icon"></p>
-  <p id="weather-desc"></p>
-  <p id="temperature"></p>
-  <p id="feels-like"></p>
-  <p id="temp-min-max"></p>
-  <p id="humidity"></p>
-  <p id="pressure"></p>
-  <p id="visibility"></p>
-  <p id="wind-speed"></p>
-  <p id="wind-deg"></p>
-  <p id="clouds"></p>
-  <p id="rain"></p>
-  <p id="snow"></p>
-  <p id="sunrise"></p>
-  <p id="sunset"></p>
-  <p id="coordinates"></p>
-  <p id="observed-at"></p>
-</div>
+      <!-- ② エラーメッセージ（置換：見やすいアラート） -->
+      <div id="error-msg" class="alert" role="alert">
+        残念！該当結果は見つかりませんでした！
+      </div>
+
+      <!-- 検索履歴チップ -->
+      <div id="history" class="chips" aria-label="最近の検索"></div>
+
+      <!-- ③ 天気の表示エリア（カード + グリッド） -->
+      <div id="weather-result" class="result">
+        <div class="result-top">
+          <div class="city">
+            <div>
+              <h2 id="city-name"></h2>
+              <p id="observed-at"></p>
+            </div>
+          </div>
+
+          <div class="summary">
+            <div id="weather-icon"></div>
+            <div>
+              <div class="tempBig" id="temperature"></div>
+              <div class="desc" id="weather-desc"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="kv"><div class="k">体感</div><div class="v" id="feels-like"></div></div>
+          <div class="kv"><div class="k">最低 / 最高</div><div class="v" id="temp-min-max"></div></div>
+          <div class="kv"><div class="k">湿度</div><div class="v" id="humidity"></div></div>
+
+          <div class="kv"><div class="k">気圧</div><div class="v" id="pressure"></div></div>
+          <div class="kv"><div class="k">視程</div><div class="v" id="visibility"></div></div>
+          <div class="kv"><div class="k">雲量</div><div class="v" id="clouds"></div></div>
+
+          <div class="kv"><div class="k">風速</div><div class="v" id="wind-speed"></div></div>
+          <div class="kv"><div class="k">風向</div><div class="v" id="wind-deg"></div></div>
+          <div class="kv"><div class="k">緯度 / 経度</div><div class="v" id="coordinates"></div></div>
+
+          <div class="kv"><div class="k">雨</div><div class="v" id="rain"></div></div>
+          <div class="kv"><div class="k">雪</div><div class="v" id="snow"></div></div>
+          <div class="kv"><div class="k">日の出 / 日の入</div><div class="v"><span id="sunrise"></span> / <span id="sunset"></span></div></div>
+        </div>
+
+        <div class="foot">
+          <span>※ 公開 URL 上で動作を確認済みです。 </span>
+          <a class="link" href="#" id="share-link">🔗 この検索を共有</a>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script src="app.js"></script>
-</body>
-</html>
