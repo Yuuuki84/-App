@@ -2,27 +2,56 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>天気アプリ</title>
+  <title>お天気アプリ App </title>
+
+  <style>
+    #city-input {
+      width: 300px;
+      padding: 6px 10px;
+      font-size: 16px;
+    }
+
+    #search-btn {
+      padding: 6px 16px;
+      font-size: 16px;
+    }
+  </style>
+
 </head>
 <body>
 
-  <h1>天気アプリ</h1>
+  <h1>お天気アプリ App </h1>
 
   <!-- ① 都市名の入力 -->
-  <input type="text" id="city-input" placeholder="都市名を英語で入力（例：Tokyo）">
+  <input type="text" id="city-input" placeholder="都道府県を入力（例：大阪、和歌山）">
   <button id="search-btn">検索</button>
 
   <!-- ② エラーメッセージ -->
   <p id="error-msg" style="color: red; display: none;">
-    都市が見つかりませんでした
+    残念！該当結果は見つかりませんでした！
   </p>
 
-  <!-- ③ 天気の表示エリア -->
-  <div id="weather-result" style="display: none;">
-    <h2 id="city-name"></h2>
-    <p id="weather-desc"></p>
-    <p id="temperature"></p>
-  </div>
+  <!-- ③ 天気の表示エリア（全項目に対応） -->
+<div id="weather-result" style="display: none;">
+  <h2 id="city-name"></h2>
+  <p id="weather-icon"></p>
+  <p id="weather-desc"></p>
+  <p id="temperature"></p>
+  <p id="feels-like"></p>
+  <p id="temp-min-max"></p>
+  <p id="humidity"></p>
+  <p id="pressure"></p>
+  <p id="visibility"></p>
+  <p id="wind-speed"></p>
+  <p id="wind-deg"></p>
+  <p id="clouds"></p>
+  <p id="rain"></p>
+  <p id="snow"></p>
+  <p id="sunrise"></p>
+  <p id="sunset"></p>
+  <p id="coordinates"></p>
+  <p id="observed-at"></p>
+</div>
 
   <script src="app.js"></script>
 </body>
